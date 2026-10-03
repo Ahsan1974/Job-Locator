@@ -1,0 +1,58 @@
+databases:
+  - name: job-hunter-db
+    plan: free
+    databaseName: job_hunter
+    user: job_hunter
+
+services:
+  - type: web
+    name: job-hunter-api
+    runtime: docker
+    plan: free
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: job-hunter-db
+          property: connectionString
+      - key: APP_ENV
+        value: production
+      - key: APP_NAME
+        value: Job Hunter API
+      - key: APP_URL
+        value: https://frontend-nine-swart-98.vercel.app
+      - key: CORS_ORIGINS
+        value: https://frontend-nine-swart-98.vercel.app
+      - key: SECRET_KEY
+        generateValue: true
+      - key: REFRESH_JOBS_ON_STARTUP
+        value: "true"
+      - key: ENABLE_SCHEDULER
+        value: "true"
+      - key: JOB_REFRESH_MINUTES
+        value: "60"
+      - key: JOB_FETCH_LIMIT_PER_SOURCE
+        value: "25"
+      - key: LINKEDIN_FETCH_LIMIT
+        value: "24"
+      - key: PAKISTAN_FETCH_LIMIT
+        value: "20"
+      - key: ENABLE_LINKEDIN_SCRAPING
+        value: "true"
+      - key: ENABLE_PAKISTAN_SCRAPING
+        value: "true"
+      - key: GROQ_API_KEY
+        sync: false
+      - key: JOOBLE_API_KEY
+        sync: false
+      - key: ADZUNA_APP_ID
+        sync: false
+      - key: ADZUNA_APP_KEY
+        sync: false
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false

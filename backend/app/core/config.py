@@ -4,7 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 _ROOT = Path(__file__).resolve().parents[3]
@@ -36,6 +36,16 @@ class Settings(BaseSettings):
     # Default: local SQLite (no Docker / no Postgres required)
     database_url: str = _DEFAULT_DB
     database_url_sync: str = _DEFAULT_DB_SYNC
+
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def normalize_database_url(cls, value: str) -> str:
+        """Render exposes a sync Postgres URL; SQLAlchemy uses asyncpg here."""
+        if value.startswith("postgres://"):
+            return value.replace("postgres://", "postgresql+asyncpg://", 1)
+        if value.startswith("postgresql://"):
+            return value.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return value
 
     google_client_id: str = ""
     google_client_secret: str = ""
