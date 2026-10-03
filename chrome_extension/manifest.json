@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Java Career AI",
+  "version": "1.0.0",
+  "description": "Show AI resume match context for Java jobs and open them in your dashboard.",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "http://localhost:8000/*"
+  ],
+  "action": {
+    "default_title": "Java Career AI",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:3000/jobs/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

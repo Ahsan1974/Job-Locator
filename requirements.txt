@@ -1,0 +1,2 @@
+# Install backend deps from project root (venv must be backend\.venv)
+-r backend/requirements.txt

@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --canvas: 247 248 252;
+  --canvas-elevated: 255 255 255;
+  --ink: 24 24 43;
+  --ink-muted: 79 83 107;
+  --ink-faint: 126 132 158;
+  --accent: 99 72 211;
+  --accent-soft: 237 233 254;
+  --accent-foreground: 255 255 255;
+  --line: 226 227 237;
+  --success: 13 148 136;
+  --warning: 245 158 11;
+  --danger: 225 68 101;
+}
+
+.dark {
+  --canvas: 12 13 24;
+  --canvas-elevated: 21 22 38;
+  --ink: 241 242 249;
+  --ink-muted: 171 174 196;
+  --ink-faint: 119 124 151;
+  --accent: 151 125 255;
+  --accent-soft: 55 45 103;
+  --accent-foreground: 255 255 255;
+  --line: 43 45 66;
+  --success: 45 212 191;
+  --warning: 251 191 36;
+  --danger: 248 113 113;
+}
+
+@layer base {
+  * {
+    @apply border-line;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-canvas;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    background-image: theme("backgroundImage.mesh-light");
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  .dark body,
+  html.dark body {
+    background-image: theme("backgroundImage.mesh-dark");
+  }
+}
+
+@layer components {
+  .glass {
+    @apply border border-line/80 bg-canvas-elevated/95 shadow-glass;
+  }
+
+  .glass-panel {
+    @apply glass rounded-2xl;
+  }
+
+  .btn-primary {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-accent-foreground shadow-sm shadow-accent/20 transition hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-line bg-canvas-elevated px-4 py-2.5 text-sm font-medium text-ink transition hover:border-accent/30 hover:bg-accent/5;
+  }
+
+  .input-field {
+    @apply min-h-11 w-full rounded-xl border border-line bg-canvas-elevated px-3.5 py-2.5 text-sm text-ink outline-none placeholder:text-ink-faint focus:border-accent focus:ring-2 focus:ring-accent/20;
+  }
+
+  .skeleton {
+    @apply animate-shimmer rounded-xl bg-gradient-to-r from-line/40 via-line/80 to-line/40 bg-[length:200%_100%];
+  }
+
+  .page-title {
+    @apply font-display text-2xl font-semibold tracking-tight sm:text-3xl;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.16em] text-accent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
