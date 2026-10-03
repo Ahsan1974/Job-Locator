@@ -42,6 +42,11 @@ from app.services.notification_service import notify_new_job
 logger = logging.getLogger(__name__)
 
 
+def _fetch_connector_in_thread(connector: JobSourceConnector, limit: int) -> list[RawJob]:
+    """Run a connector on its own event loop so blocking scrapers cannot freeze the API."""
+    return asyncio.run(connector.fetch(limit=limit))
+
+
 def get_connectors() -> list[JobSourceConnector]:
     settings = get_settings()
     connectors: list[JobSourceConnector] = [
@@ -145,7 +150,7 @@ class JobIngestionService:
 
         async def _fetch(connector: JobSourceConnector) -> tuple[str, list]:
             limit = self._limit_for(connector.name, limit_per_source)
-            raw_jobs = await connector.fetch(limit=limit)
+            raw_jobs = await asyncio.to_thread(_fetch_connector_in_thread, connector, limit)
             return connector.name, raw_jobs
 
         fetched = await asyncio.gather(*[_fetch(c) for c in connectors], return_exceptions=True)
@@ -187,7 +192,7 @@ class JobIngestionService:
         raise ValueError(f"Unknown job source: {source}")
 
     async def refresh_source(self, connector: JobSourceConnector, limit: int = 50) -> int:
-        raw_jobs = await connector.fetch(limit=limit)
+        raw_jobs = await asyncio.to_thread(_fetch_connector_in_thread, connector, limit)
         saved = 0
         for raw in raw_jobs:
             try:
